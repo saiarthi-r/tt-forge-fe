@@ -139,7 +139,8 @@ void run_optimization_graph_passes(graphlib::Graph *graph)
         if (not skip_erase_redundant)
         {
             if (not attempt_update)
-                attempt_update = passes::erase_consecutive_reshape(graph, true);
+                if (not env_as<bool>("FORGE_DISABLE_ERASE_CONSECUTIVE_RESHAPE_OPS_PASS"))
+                    attempt_update = passes::erase_consecutive_reshape(graph, true);
 
             // TODO: Figure out if this is needed. (Issue #152)
             // if (not attempt_update)
@@ -152,7 +153,8 @@ void run_optimization_graph_passes(graphlib::Graph *graph)
     recalculate_shapes(graph);
 
     passes::hoist_transforms_to_inputs(graph);
-    passes::erase_consecutive_reshape(graph, true);
+    if (not env_as<bool>("FORGE_DISABLE_ERASE_CONSECUTIVE_RESHAPE_OPS_PASS"))
+        passes::erase_consecutive_reshape(graph, true);
 
     passes::fuse_per_channel_ops(graph);
     if (not env_as<bool>("FORGE_DISABLE_CONSTANT_FOLDING"))

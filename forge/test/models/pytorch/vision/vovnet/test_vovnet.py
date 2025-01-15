@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: © 2024 Tenstorrent AI ULC
 
 # SPDX-License-Identifier: Apache-2.0
+import os
 import pytest
 from test.utils import download_model
 
@@ -86,6 +87,7 @@ def generate_model_vovnet_imgcls_timm_pytorch(test_device, variant):
     # STEP 1: Set Forge configuration parameters
     compiler_cfg = forge.config._get_global_compiler_config()  # load global compiler config object
     compiler_cfg.compile_depth = forge.CompileDepth.CONSTEVAL_GRAPH
+    os.environ["FORGE_DISABLE_ERASE_CONSECUTIVE_RESHAPE_OPS_PASS"] = "1"
 
     return model, [image_tensor], {}
 
